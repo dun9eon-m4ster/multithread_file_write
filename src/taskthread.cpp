@@ -45,3 +45,8 @@ void TaskThread::join()
     if(thread.joinable())
         thread.join();
 }
+
+SharedDataTaskThread::SharedDataTaskThread(std::shared_ptr<ThreadSharedData> _new_shared_data)
+    : _data(_new_shared_data)
+{
+}

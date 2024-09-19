@@ -2,6 +2,9 @@
 #define TASKTHREAD_H
 
 #include <thread>
+#include <memory>
+
+struct ThreadSharedData;
 
 class TaskThread
 {
@@ -29,6 +32,15 @@ private:
     virtual void process();
     State _state;
     std::thread thread;
+};
+
+class SharedDataTaskThread : public TaskThread
+{
+public:
+    SharedDataTaskThread(std::shared_ptr<ThreadSharedData> _new_shared_data);
+
+protected:
+    std::shared_ptr<ThreadSharedData> _data;
 };
 
 #endif // TASKTHREAD_H
