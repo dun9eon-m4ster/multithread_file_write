@@ -3,9 +3,10 @@
 
 #include "taskthread.h"
 
-class FileWriter : public TaskThread
+class FileWriter : public SharedDataTaskThread
 {
 public:
+    FileWriter(std::shared_ptr<ThreadSharedData> _new_shared_data);
     ~FileWriter();
     virtual void process() override;
 };
