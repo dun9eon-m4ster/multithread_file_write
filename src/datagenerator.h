@@ -6,7 +6,7 @@
 class DataGenerator : public SharedDataTaskThread
 {
 public:
-    DataGenerator(std::shared_ptr<ThreadSharedData> _new_shared_data);
+    explicit DataGenerator(std::shared_ptr<ThreadSharedData> _new_shared_data);
     ~DataGenerator();
     virtual void process() override;
 };

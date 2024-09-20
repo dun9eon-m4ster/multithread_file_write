@@ -6,7 +6,7 @@
 class FileWriter : public SharedDataTaskThread
 {
 public:
-    FileWriter(std::shared_ptr<ThreadSharedData> _new_shared_data);
+    explicit FileWriter(std::shared_ptr<ThreadSharedData> _new_shared_data);
     ~FileWriter();
     virtual void process() override;
 };
