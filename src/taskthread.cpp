@@ -5,6 +5,15 @@ TaskThread::TaskThread()
     : _state(Waiting)
 {}
 
+TaskThread::~TaskThread()
+{
+    if(thread.joinable())
+    {
+        std::cout << "Thread is not joined, call \"TaskThread::join()\" in derived class's destructor" << std::endl;
+        abort();
+    }
+}
+
 void TaskThread::start()
 {
     if(_state != Waiting)

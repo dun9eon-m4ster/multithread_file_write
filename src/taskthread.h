@@ -19,7 +19,7 @@ public:
     TaskThread();
     TaskThread(const TaskThread &other) = delete;
     TaskThread& operator=(const TaskThread &other) = delete;
-    virtual ~TaskThread() = default;
+    virtual ~TaskThread() = 0; ///< Вызвать в деструкторе наследника TaskThread::join()
 
     void start();
     void stop();
