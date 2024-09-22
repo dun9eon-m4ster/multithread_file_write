@@ -26,9 +26,25 @@ private:
 
 Timer t;
 
-int main()
+int main(int argc, char* argv[])
 {
-    DataGenerator generator(_shared_data, 100);
+    if(argc < 2)
+    {
+        std::cerr << "Error: single argument (generation tick) is not provided" << std::endl;
+        return 1;
+    }
+
+    std::string str(argv[1]);
+
+
+    auto generation_tick = std::stoi(str);
+    if(generation_tick <= 0)
+    {
+        std::cerr << "Error: argument (generation tick) must be > 0" << std::endl;
+        return 1;
+    }
+
+    DataGenerator generator(_shared_data, generation_tick);
     generator.start();
 
 
