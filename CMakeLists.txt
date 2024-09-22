@@ -14,4 +14,5 @@ add_executable(multithread_file_write
     src/filewriter.cpp
     src/filewriter.h
     src/threadshareddata.cpp
-    src/threadshareddata.h)
+    src/threadshareddata.h
+    src/data.h)
