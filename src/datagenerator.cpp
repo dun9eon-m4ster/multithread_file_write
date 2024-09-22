@@ -7,8 +7,9 @@
 static const unsigned long long BUFFER_SIZE = 256;
 static_assert (BUFFER_SIZE > 0, "Buffer cannot be zero");
 
-DataGenerator::DataGenerator(std::shared_ptr<ThreadSharedData> _new_shared_data)
-    : SharedDataTaskThread(_new_shared_data)
+DataGenerator::DataGenerator(std::shared_ptr<ThreadSharedData> _new_shared_data, unsigned int tick)
+    : SharedDataTaskThread(_new_shared_data),
+      generation_sleep_duration(1/static_cast<double>(tick))
 {
     for(unsigned long long i = 0; i < BUFFER_SIZE; i++)
     {
@@ -35,26 +36,35 @@ void DataGenerator::process()
         else
             _data->dg_flags.is_generation_started = true;
 
-        std::cout << "posting data..." << std::endl;
-
-        _data->shared_flags.is_pending_data = true;
-
-        if(!_data->fw_flags.is_working)
-            _data->shared_flags.is_notified = false;
-
-        memset((*buffer_iterator)->buffer, 0xFF, (*buffer_iterator)->size);
-        _data->_msg_queue.push(*buffer_iterator);
-
-        buffer_iterator++;
-        if(buffer_iterator == buffer.end())
+        if(_data->_msg_queue.size() < BUFFER_SIZE)
         {
-            _data->dg_flags.is_generation_finished = true;
-            stop();
+            std::cout << "posting data..." << std::endl;
+
+            _data->shared_flags.is_pending_data = true;
+
+            if(!_data->fw_flags.is_working)
+                _data->shared_flags.is_notified = false;
+
+            memset((*buffer_iterator)->buffer, 0xFF, (*buffer_iterator)->size);
+            _data->_msg_queue.push(*buffer_iterator);
+
+            buffer_iterator++;
+            if(buffer_iterator == buffer.end())
+            {
+                _data->dg_flags.is_generation_finished = true;
+                stop();
+            }
         }
+        else
+            std::cerr << "DataGenerator::process() - failed to post data, queue is full" << std::endl;
+
+
 
         std::cout << "posting data complete" << std::endl;
 
         lk.unlock();
         _data->_cv.notify_one();
+
+        std::this_thread::sleep_for(std::chrono::duration<double, std::ratio<1, 1>>(generation_sleep_duration));
     }
 }
