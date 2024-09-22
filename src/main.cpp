@@ -28,7 +28,7 @@ Timer t;
 
 int main()
 {
-    DataGenerator generator(_shared_data);
+    DataGenerator generator(_shared_data, 100);
     generator.start();
 
 
