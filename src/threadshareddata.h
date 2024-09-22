@@ -4,34 +4,42 @@
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include <memory>
 
-
-class MsgData;
+struct Data;
 
 
 struct ThreadSharedData
 {
-    enum Flags
+
+    struct SharedFlags
     {
-        None = 0x0,
-        DataIsPosting   = 0x01,
-        DataIsTaking    = 0x02,
-        PendingData     = 0x04,
+        bool is_pending_data = false;
+        bool is_notified = false;
     };
 
-    ThreadSharedData();
+    struct DGFlags
+    {
+        bool is_generation_started = false;
+        bool is_generation_finished = false;
+    };
+
+    struct FWFlags
+    {
+        bool is_working = false;
+    };
+
+    ThreadSharedData() = default;
     ThreadSharedData(const ThreadSharedData &other) = delete;
     ThreadSharedData& operator=(const ThreadSharedData &other) = delete;
 
-    void setFlag(const Flags &_new_flags, bool on = true);
-    bool isFlag(const Flags &_flags_to_check) const;
 
-
-
-    Flags flags;
+    SharedFlags shared_flags;
+    DGFlags     dg_flags;
+    FWFlags     fw_flags;
 
     std::mutex _mutex;
-    std::queue<MsgData*> _msg_queue;
+    std::queue<std::shared_ptr<Data>> _msg_queue;
     std::condition_variable _cv;
 };
 
