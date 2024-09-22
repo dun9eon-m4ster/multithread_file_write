@@ -22,7 +22,7 @@ void FileWriter::process()
     file.open("test.txt", std::ios_base::app);
     if(!file.is_open())
     {
-        std::cout << "FileWriter::process() - file is not open" << std::endl;
+        std::cerr << "FileWriter::process() - file is not open" << std::endl;
         abort();
     }
 

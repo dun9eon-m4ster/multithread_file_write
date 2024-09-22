@@ -9,7 +9,7 @@ TaskThread::~TaskThread()
 {
     if(thread.joinable())
     {
-        std::cout << "Thread is not joined, call \"TaskThread::join()\" in derived class's destructor" << std::endl;
+        std::cerr << "Thread is not joined, call \"TaskThread::join()\" in derived class's destructor" << std::endl;
         abort();
     }
 }
