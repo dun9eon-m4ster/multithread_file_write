@@ -16,3 +16,9 @@ add_executable(multithread_file_write
     src/threadshareddata.cpp
     src/threadshareddata.h
     src/data.h)
+
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+    target_link_libraries(multithread_file_write Threads::Threads)
+endif()
