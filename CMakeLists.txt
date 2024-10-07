@@ -15,7 +15,10 @@ add_executable(multithread_file_write
     src/filewriter.h
     src/threadshareddata.cpp
     src/threadshareddata.h
-    src/data.h)
+    src/data.h
+    src/cyclicbuffer.cpp
+    src/cyclicbuffer.h
+    )
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     set(THREADS_PREFER_PTHREAD_FLAG ON)
