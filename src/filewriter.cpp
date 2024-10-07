@@ -4,8 +4,10 @@
 #include <fstream>
 #include "data.h"
 
-FileWriter::FileWriter(std::shared_ptr<ThreadSharedData> _new_shared_data)
-    : SharedDataTaskThread(_new_shared_data)
+FileWriter::FileWriter(std::shared_ptr<ThreadSharedData> _new_shared_data, const size_t &_new_data_record_goal)
+    : SharedDataTaskThread(_new_shared_data),
+      data_recorded(0),
+      data_record_goal(_new_data_record_goal)
 {
 
 }
@@ -58,8 +60,16 @@ void FileWriter::process()
             auto data = tmp_queue.front();
             tmp_queue.pop();
             file.write(reinterpret_cast<char*>(data->buffer), data->size);
+            data_recorded++;
+            if(data_recorded == data_record_goal)
+            {
+                _data->fw_flags.is_goal_reached = true;
+                stop();
+                break;
+            }
         }
 
-        _data->fw_flags.is_working = false;
+        if(!_data->fw_flags.is_goal_reached)
+            _data->fw_flags.is_working = false;
     }
 }
