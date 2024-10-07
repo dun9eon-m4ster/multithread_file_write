@@ -28,19 +28,23 @@ Timer t;
 
 int main(int argc, char* argv[])
 {
-    if(argc < 2)
+    if(argc != 3)
     {
-        std::cerr << "Error: single argument (generation tick) is not provided" << std::endl;
+        std::cerr << "Error: argument count mismatch: expected 2, have " << argc-1 << std::endl;
         return 1;
     }
 
-    std::string str(argv[1]);
-
-
-    auto generation_tick = std::stoi(str);
+    auto generation_tick = std::stoi(argv[1]);
     if(generation_tick <= 0)
     {
-        std::cerr << "Error: argument (generation tick) must be > 0" << std::endl;
+        std::cerr << "Error: 1st argument (generation tick) must be > 0" << std::endl;
+        return 1;
+    }
+
+    auto data_record_goal = std::stol(argv[2]);
+    if(data_record_goal <= 0)
+    {
+        std::cerr << "Error: 2nd argument (data record goal) must be > 0" << std::endl;
         return 1;
     }
 
@@ -48,7 +52,7 @@ int main(int argc, char* argv[])
     generator.start();
 
 
-    FileWriter writer(_shared_data);
+    FileWriter writer(_shared_data, data_record_goal);
     writer.start();
 
 

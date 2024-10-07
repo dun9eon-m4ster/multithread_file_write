@@ -27,6 +27,7 @@ struct ThreadSharedData
     struct FWFlags
     {
         bool is_working = false;
+        bool is_goal_reached = false;
     };
 
     ThreadSharedData() = default;
