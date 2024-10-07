@@ -2,7 +2,7 @@
 #define DATAGENERATOR_H
 
 #include "taskthread.h"
-#include <vector>
+#include "cyclicbuffer.h"
 
 struct Data;
 
@@ -14,8 +14,7 @@ public:
     virtual void process() override;
 
 private:
-    std::vector<std::shared_ptr<Data>> buffer;
-    std::vector<std::shared_ptr<Data>>::iterator buffer_iterator;
+    CyclicBuffer<Data> buffer;
     double generation_sleep_duration;
 };
 
