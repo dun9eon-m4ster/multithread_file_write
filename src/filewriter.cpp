@@ -37,39 +37,38 @@ void FileWriter::process()
 
         _data->_cv.wait(lk, [this]{return _data->shared_flags.is_pending_data;});
 
-        std::cout << "accessing data..." << std::endl;
-        while(!_data->_msg_queue.empty())
+
+        std::shared_ptr<Data> _new_data(nullptr);
+        if(!_data->_msg_queue.empty())
         {
-            tmp_queue.push(_data->_msg_queue.front());
+            _new_data = _data->_msg_queue.front();
             _data->_msg_queue.pop();
         }
 
+
         _data->shared_flags.is_pending_data = false;
         _data->shared_flags.is_notified = true;
-        _data->fw_flags.is_working = true;
+        _data->fw_data.is_working.store(true, std::memory_order_relaxed);
 
-        if(_data->dg_flags.is_generation_finished)
-            stop();
 
-        std::cout << "accessing data complete" << std::endl;
         lk.unlock();
         _data->_cv.notify_one();
 
-        while(!tmp_queue.empty())
+
+        if(_new_data)
         {
-            auto data = tmp_queue.front();
-            tmp_queue.pop();
-            file.write(reinterpret_cast<char*>(data->buffer), data->size);
+            file.write(reinterpret_cast<char*>(_new_data->buffer), _new_data->size);
             data_recorded++;
+            _data->fw_data.data_record_percent.store(data_recorded/static_cast<double>(data_record_goal) * 100, std::memory_order_relaxed);
             if(data_recorded == data_record_goal)
             {
-                _data->fw_flags.is_goal_reached = true;
+                _data->fw_data.is_goal_reached = true;
                 stop();
-                break;
             }
         }
 
-        if(!_data->fw_flags.is_goal_reached)
-            _data->fw_flags.is_working = false;
+
+        if(!_data->fw_data.is_goal_reached.load(std::memory_order_relaxed))
+            _data->fw_data.is_working.store(false);
     }
 }
