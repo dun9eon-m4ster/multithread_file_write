@@ -5,6 +5,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <memory>
+#include <atomic>
 
 struct Data;
 
@@ -18,26 +19,19 @@ struct ThreadSharedData
         bool is_notified = false;
     };
 
-    struct DGFlags
+    struct FWData
     {
-        bool is_generation_started = false;
-        bool is_generation_finished = false;
-    };
-
-    struct FWFlags
-    {
-        bool is_working = false;
-        bool is_goal_reached = false;
+        std::atomic<bool> is_working{false};
+        std::atomic<bool> is_goal_reached{false};
+        std::atomic<double> data_record_percent{0};
     };
 
     ThreadSharedData() = default;
     ThreadSharedData(const ThreadSharedData &other) = delete;
     ThreadSharedData& operator=(const ThreadSharedData &other) = delete;
 
-
     SharedFlags shared_flags;
-    DGFlags     dg_flags;
-    FWFlags     fw_flags;
+    FWData     fw_data;
 
     std::mutex _mutex;
     std::queue<std::shared_ptr<Data>> _msg_queue;
