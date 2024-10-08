@@ -18,6 +18,8 @@ add_executable(multithread_file_write
     src/data.h
     src/cyclicbuffer.cpp
     src/cyclicbuffer.h
+    src/progressbar.cpp
+    src/progressbar.h
     )
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
