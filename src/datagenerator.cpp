@@ -3,7 +3,6 @@
 #include "threadshareddata.h"
 #include "data.h"
 #include <cstring>
-#include <iomanip>
 #include "progressbar.h"
 
 Data data_example;
